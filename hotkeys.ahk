@@ -1,5 +1,16 @@
+; Keyboard bug: fix with fn w
+
+; Get hotkeys.ahk on startup: windows + R -> startup:shell -> copy shortcut (alt + clickdrag)
+
+; In code editor hotkeys
+; auto-format: shift + alt + f
+; next-tab: cntrl + tab 
+
 #Requires AutoHotkey v2.0
 #SingleInstance
+#Warn All, Off  ; Disables all warnings
+A_HotkeyInterval := 99999999  ; Makes the interval very long
+A_MaxHotkeysPerInterval := 99999999  ; Effectively disables the warning
 
 ; Initialize toggle state
 isEnabled := false
@@ -21,29 +32,15 @@ isEnabled := false
             Hotkey A_Index - 1, DoNothing, "On"
         }
 
-        ; Block special keys
-        special_keys := [
-            "Space", "Tab", "Enter", "BS", "Del"
-            "Insert", "Home", "End", "PgUp", "PgDn",
-            "F1", "F2", "F3", "F4", "F5", "F6",
-            "F7", "F8", "F9", "F10", "F11", "F12",
-            "[", "]", ";", "'", ",", ".", "/", "\",
-            "-", "="
-        ]
-
-        for key in special_keys {
-            Hotkey key, DoNothing, "On"
-        }
-
         ; Enable our navigation hotkeys
-        Hotkey "f", SendUp, "On"
-        Hotkey "d", SendDown, "On"
+        Hotkey "d", SendUp, "On"
+        Hotkey "f", SendDown, "On"
         Hotkey "a", SendLeft, "On"
         Hotkey "s", SendRight, "On"
 
         ; Selection
-        Hotkey "+f", SendShiftUp, "On"
-        Hotkey "+d", SendShiftDown, "On"
+        Hotkey "+d", SendShiftUp, "On"
+        Hotkey "+f", SendShiftDown, "On"
         Hotkey "+a", SendShiftLeft, "On"
         Hotkey "+s", SendShiftRight, "On"
 
@@ -57,8 +54,6 @@ isEnabled := false
         Hotkey "+q", SendShiftHome, "On"
         Hotkey "+e", SendShiftEnd, "On"
 
-
-        ToolTip "Navigation Mode: ON"
     } else {
         ; Unblock letter keys
         loop 26 {
@@ -69,20 +64,6 @@ isEnabled := false
         ; Unblock number keys
         loop 10 {
             try Hotkey A_Index - 1, "Off"
-        }
-
-        ; Unblock special keys (removed Del)
-        special_keys := [
-            "Space", "Tab", "Enter", "BS", "Del"
-            "Insert", "Home", "End", "PgUp", "PgDn",
-            "F1", "F2", "F3", "F4", "F5", "F6",
-            "F7", "F8", "F9", "F10", "F11", "F12",
-            "[", "]", ";", "'", ",", ".", "/", "\",
-            "-", "="
-        ]
-
-        for key in special_keys {
-            try Hotkey key, "Off"
         }
 
         ; Turn off navigation hotkeys
@@ -102,9 +83,7 @@ isEnabled := false
             Hotkey "+e", "Off"
         }
 
-        ToolTip "Navigation Mode: OFF"
     }
-    SetTimer () => ToolTip(), -1000
 }
 
 DoNothing(*) {
@@ -129,7 +108,6 @@ SendShiftEnd(*) => SendInput("+{End}")
 
 ; Word selection functions
 SendCtrlShiftLeft(*) => SendInput("^+{Left}")
-SendCtrlShiftRight(*) => SendInput("^+{Right}")
 
 ; Essential shortcuts that need to work in WASD mode
 #HotIf isEnabled
@@ -138,5 +116,19 @@ SendCtrlShiftRight(*) => SendInput("^+{Right}")
 ^x:: SendInput("^x")  ; Cut
 ^z:: SendInput("^z")  ; Undo
 ^y:: SendInput("^y")  ; Redo
-^+s:: SendInput("^+{Right}")  ; Handle Ctrl+Shift+S explicitly here to override AMD hotkey
+^+a:: SendInput("^+{Left}")  ; Ctrl+Shift+S for select left word
+^+s:: SendInput("^+{Right}")  ; Ctrl+Shift+S for select right word
+BS:: SendInput("{BackSpace}")  ; Allow Backspace key to work
+^f:: SendInput("{PgDn}")  ; Ctrl+F for Page Down
+^d:: SendInput("{PgUp}")  ; Ctrl+D for Page Up
+
 #HotIf
+
+; Standalone permanent hotkeys
+
++BS:: SendInput("{Home}+{End}{Delete}")  ; Delete entire line
+!e:: SendInput("{End}")  ; Alt+E to end of line
+Up:: return  ; Disable up arrow
+Down:: return  ; Disable down arrow
+Left:: return  ; Disable left arrow
+Right:: return  ; Disable right arrow
