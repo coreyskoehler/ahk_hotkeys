@@ -1,16 +1,25 @@
-; Keyboard bug: fix with fn w
+#Requires AutoHotkey v2.0
+
+; Keyboard bug: fix with fn+w
 
 ; Get hotkeys.ahk on startup: windows + R -> startup:shell -> copy shortcut (alt + clickdrag)
 
-; In code editor hotkeys
+; EXISTING HOTKEYS
 ; auto-format: shift + alt + f
-; next-tab: cntrl + tab 
+; next-tab: cntrl + tab
+; previous-ftab: shift + cntrl + tab
+; search for application: windows + s
+
+; VSCODE
+; cntrl + shift + e = open explorer
 
 #Requires AutoHotkey v2.0
 #SingleInstance
 #Warn All, Off  ; Disables all warnings
 A_HotkeyInterval := 99999999  ; Makes the interval very long
 A_MaxHotkeysPerInterval := 99999999  ; Effectively disables the warning
+
+; HOTKEY MAP
 
 ; Initialize toggle state
 isEnabled := false
@@ -22,113 +31,140 @@ isEnabled := false
         ; Block letter keys
         loop 26 {
             key := Chr(A_Index + 96)  ; Convert to lowercase letters
-            if key != "a" && key != "s" && key != "d" && key != "f" && key != "q" && key != "e" {
-                Hotkey key, DoNothing, "On"
-            }
+            Hotkey key, DoNothing, "On"
         }
-
         ; Block number keys
         loop 10 {
             Hotkey A_Index - 1, DoNothing, "On"
         }
-
-        ; Enable our navigation hotkeys
-        Hotkey "d", SendUp, "On"
-        Hotkey "f", SendDown, "On"
-        Hotkey "a", SendLeft, "On"
-        Hotkey "s", SendRight, "On"
-
-        ; Selection
-        Hotkey "+d", SendShiftUp, "On"
-        Hotkey "+f", SendShiftDown, "On"
-        Hotkey "+a", SendShiftLeft, "On"
-        Hotkey "+s", SendShiftRight, "On"
-
-        ; Word selection (changed Ctrl+Shift+S to explicit hotkey)
-        Hotkey "^a", SendCtrlShiftLeft, "On"
-        ; Remove the normal Ctrl+S binding and handle Ctrl+Shift+S separately
-
-        ; Line navigation
-        Hotkey "q", SendHome, "On"
-        Hotkey "e", SendEnd, "On"
-        Hotkey "+q", SendShiftHome, "On"
-        Hotkey "+e", SendShiftEnd, "On"
-
     } else {
         ; Unblock letter keys
         loop 26 {
             key := Chr(A_Index + 96)
             try Hotkey key, "Off"
         }
-
         ; Unblock number keys
         loop 10 {
             try Hotkey A_Index - 1, "Off"
         }
-
-        ; Turn off navigation hotkeys
-        try {
-            Hotkey "f", "Off"
-            Hotkey "s", "Off"
-            Hotkey "d", "Off"
-            Hotkey "f", "Off"
-            Hotkey "+a", "Off"
-            Hotkey "+s", "Off"
-            Hotkey "+d", "Off"
-            Hotkey "+f", "Off"
-            Hotkey "^a", "Off"
-            Hotkey "q", "Off"
-            Hotkey "e", "Off"
-            Hotkey "+q", "Off"
-            Hotkey "+e", "Off"
-        }
-
     }
+
 }
 
 DoNothing(*) {
     return
 }
 
-; Movement functions
-SendUp(*) => SendInput("{Up}")
-SendDown(*) => SendInput("{Down}")
-SendLeft(*) => SendInput("{Left}")
-SendRight(*) => SendInput("{Right}")
-SendHome(*) => SendInput("{Home}")
-SendEnd(*) => SendInput("{End}")
-
-; Selection functions
-SendShiftUp(*) => SendInput("+{Up}")
-SendShiftDown(*) => SendInput("+{Down}")
-SendShiftLeft(*) => SendInput("+{Left}")
-SendShiftRight(*) => SendInput("+{Right}")
-SendShiftHome(*) => SendInput("+{Home}")
-SendShiftEnd(*) => SendInput("+{End}")
-
-; Word selection functions
-SendCtrlShiftLeft(*) => SendInput("^+{Left}")
-
-; Essential shortcuts that need to work in WASD mode
+; SIMPLE REMAPS
 #HotIf isEnabled
+; Navigation
+d:: SendInput("{Up}")
+f:: SendInput("{Down}")
+a:: SendInput("{Left}")
+s:: SendInput("{Right}")
+^f:: SendInput("{PgDn}")
+^d:: SendInput("{PgUp}")
+
+; Line navigation
+q:: SendInput("{Home}")
+e:: SendInput("{End}")
++q:: SendInput("+{Home}")
++e:: SendInput("+{End}")
+
+; Selection
++d:: SendInput("+{Up}")
++f:: SendInput("+{Down}")
++a:: SendInput("+{Left}")
++s:: SendInput("+{Right}")
+
+; Word Selection
+^+a:: SendInput("^+{Left}")
+^+s:: SendInput("^+{Right}")
+
+; Basic commands
 ^c:: SendInput("^c")  ; Copy
 ^v:: SendInput("^v")  ; Paste
 ^x:: SendInput("^x")  ; Cut
 ^z:: SendInput("^z")  ; Undo
 ^y:: SendInput("^y")  ; Redo
-^+a:: SendInput("^+{Left}")  ; Ctrl+Shift+S for select left word
-^+s:: SendInput("^+{Right}")  ; Ctrl+Shift+S for select right word
-BS:: SendInput("{BackSpace}")  ; Allow Backspace key to work
-^f:: SendInput("{PgDn}")  ; Ctrl+F for Page Down
-^d:: SendInput("{PgUp}")  ; Ctrl+D for Page Up
+BS:: SendInput("{BackSpace}")
 
+; Move window to left
+1:: {
+    if isEnabled {
+        Send "#{Left}"
+    }
+}
+; Move window to right
+2:: {
+    if isEnabled {
+        Send "#{Right}"
+    }
+}
+; Move Window to left monitor
+3:: {
+    if isEnabled {
+        Send "#+{Left}"
+    }
+}
+; Move Window to right monitor
+4:: {
+    if isEnabled {
+        Send "#+{Right}"
+    }
+}
+
+; Go to previous virtual desktop
+5:: {
+    if isEnabled {
+        Send "#^{Left}"
+    }
+}
+
+; Go to next virtual desktop
+6:: {
+    if isEnabled {
+        Send "#^{Right}"
+    }
+}
+
+; Maximize Window
+7:: {
+    if isEnabled {
+        Send "#{Up}"
+    }
+}
+
+; Minimize Window
+8:: {
+    if isEnabled {
+        Send "#{Down}"
+    }
+}
 #HotIf
 
-; Standalone permanent hotkeys
-
-+BS:: SendInput("{Home}+{End}{Delete}")  ; Delete entire line
-!e:: SendInput("{End}")  ; Alt+E to end of line
+; STANDALONE HOTKEYS
+!^BS:: SendInput("{Home}+{End}{Delete}")  ; Delete entire line
+!BS:: SendInput("{Delete}") ; Delete Key
+!^e:: SendInput("{End}")  ; Cntrl+Alt+E to end of line
 Up:: return  ; Disable up arrow
 Down:: return  ; Disable down arrow
 Left:: return  ; Disable left arrow
 Right:: return  ; Disable right arrow
+!^f:: SendInput("{Down}")
+!^d:: SendInput("{Up}")
+!^s:: SendInput("{Right}")
+!^a:: SendInput("{Left}")
+
+!`:: {  ; Alt+`: Focus previous window of same type
+    class := WinGetClass("A")
+    exe := WinGetProcessName("A")
+    WinActivate("ahk_class " class " ahk_exe " exe)
+}
+
+!+`:: {  ; Alt+Shift+`: Focus next window of same type
+    class := WinGetClass("A")
+    exe := WinGetProcessName("A")
+    if WinExist("ahk_class " class " ahk_exe " exe)
+        WinActivateBottom
+}
