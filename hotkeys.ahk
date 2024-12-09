@@ -12,6 +12,7 @@
 
 ; VSCODE
 ; cntrl + shift + e = open explorer
+; cntrl + b = toggle explorer 
 
 #Requires AutoHotkey v2.0
 #SingleInstance
