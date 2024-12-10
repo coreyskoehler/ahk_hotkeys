@@ -14,6 +14,26 @@
 ; cntrl + shift + e = open explorer
 ; cntrl + b = toggle explorer 
 
+
+; SEARCH ENGINE
+; # Navigation
+; Ctrl + L           : Focus address bar
+; Alt + D            : Focus address bar (alternative)
+; Ctrl + K          : Focus search bar
+; F6                : Toggle focus between address bar and page content
+
+; # Tab Management
+; Ctrl + T          : New tab
+; Ctrl + N          : New window
+; Ctrl + Shift + N  : New incognito window
+; Ctrl + W          : Close current tab
+; Ctrl + Shift + T  : Reopen last closed tab
+; Ctrl + Tab        : Switch to next tab
+; Ctrl + Shift + Tab: Switch to previous tab
+; Ctrl + [1-8]      : Switch to specific tab (1-8)
+; Ctrl + 9          : Switch to last tab
+
+
 #Requires AutoHotkey v2.0
 #SingleInstance
 #Warn All, Off  ; Disables all warnings
@@ -112,12 +132,25 @@ BS:: SendInput("{BackSpace}")
 
 !F4:: SendInput("!F4")
 
+; Cursor commands
+!^f:: SendInput("^!{Down}") ; Add cursor below
+!^d:: SendInput("^!{Up}") ; Add cursor above
+; Esc ; Cancel Multiple curosrs
+
+; # Basic Cursor Commands
+; Ctrl + Alt + Up/Down    : Add cursor above/below
+; Ctrl + D                : Select next occurrence of current selection
+; Ctrl + Shift + L        : Select all occurrences of current selection
+; Alt + Shift + I         : Insert cursor at end of each selected line
+; Esc                     : Cancel multiple cursors, return to single cursor
+
+
 
 #HotIf
 
 ; STANDALONE HOTKEYS
-!^BS:: SendInput("{Home}+{End}{Delete}")  ; Delete entire line
-!BS:: SendInput("{Delete}") ; Delete Key
+!BS:: SendInput("{Home}+{End}{Delete}")  ; Delete entire line
+^BS:: SendInput("{Delete}") ; Delete Key
 !^e:: SendInput("{End}")  ; Cntrl+Alt+E to end of line
 Up:: return  ; Disable up arrow
 Down:: return  ; Disable down arrow
