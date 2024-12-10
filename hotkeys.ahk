@@ -91,57 +91,28 @@ e:: SendInput("{End}")
 BS:: SendInput("{BackSpace}")
 
 ; Move window to left
-1:: {
-    if isEnabled {
-        Send "#{Left}"
-    }
-}
+1:: SendInput("#{Left}")
 ; Move window to right
-2:: {
-    if isEnabled {
-        Send "#{Right}"
-    }
-}
+2:: SendInput("#{Right}")
+
 ; Move Window to left monitor
-3:: {
-    if isEnabled {
-        Send "#+{Left}"
-    }
-}
+3:: SendInput("#+{Left}")
 ; Move Window to right monitor
-4:: {
-    if isEnabled {
-        Send "#+{Right}"
-    }
-}
+4:: SendInput("#+{Right}")
 
 ; Go to previous virtual desktop
-5:: {
-    if isEnabled {
-        Send "#^{Left}"
-    }
-}
-
+5:: SendInput("#^{Left}")
 ; Go to next virtual desktop
-6:: {
-    if isEnabled {
-        Send "#^{Right}"
-    }
-}
+6:: SendInput("#^{Right}")
 
 ; Maximize Window
-7:: {
-    if isEnabled {
-        Send "#{Up}"
-    }
-}
-
+7:: SendInput("#{Up}")
 ; Minimize Window
-8:: {
-    if isEnabled {
-        Send "#{Down}"
-    }
-}
+8:: SendInput("#{Down}")
+
+!F4:: SendInput("!F4")
+
+
 #HotIf
 
 ; STANDALONE HOTKEYS
@@ -156,16 +127,3 @@ Right:: return  ; Disable right arrow
 !^d:: SendInput("{Up}")
 !^s:: SendInput("{Right}")
 !^a:: SendInput("{Left}")
-
-!`:: {  ; Alt+`: Focus previous window of same type
-    class := WinGetClass("A")
-    exe := WinGetProcessName("A")
-    WinActivate("ahk_class " class " ahk_exe " exe)
-}
-
-!+`:: {  ; Alt+Shift+`: Focus next window of same type
-    class := WinGetClass("A")
-    exe := WinGetProcessName("A")
-    if WinExist("ahk_class " class " ahk_exe " exe)
-        WinActivateBottom
-}
