@@ -160,3 +160,6 @@ Right:: return  ; Disable right arrow
 !^d:: SendInput("{Up}")
 !^s:: SendInput("{Right}")
 !^a:: SendInput("{Left}")
+
+
+test 
