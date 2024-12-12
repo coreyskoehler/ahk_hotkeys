@@ -133,7 +133,7 @@ BS:: SendInput("{BackSpace}")
 !F4:: SendInput("!F4")
 
 ; Cursor commands
-!^f:: SendInput("^!{Down}") ; Add cursor below
+!^f:: SendInput("^!{Down}") ; Add cursor below 
 !^d:: SendInput("^!{Up}") ; Add cursor above
 ; Esc ; Cancel Multiple curosrs
 
@@ -150,7 +150,7 @@ BS:: SendInput("{BackSpace}")
 
 ; STANDALONE HOTKEYS
 !BS:: SendInput("{Home}+{End}{Delete}")  ; Delete entire line
-^BS:: SendInput("{Delete}") ; Delete Key
+vkFF & BS:: SendInput("{Delete}") ; Delete Key
 !^e:: SendInput("{End}")  ; Cntrl+Alt+E to end of line
 Up:: return  ; Disable up arrow
 Down:: return  ; Disable down arrow
